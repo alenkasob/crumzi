@@ -25,14 +25,12 @@ public class JsonReader {
         LocalDateTime dateTime = LocalDateTime.now();
         Long beggining = dateTime.toLocalDate().atStartOfDay().toEpochSecond(ZoneOffset.UTC) * 1000;
         final String currentDateTime = Long.toString(System.currentTimeMillis());
-
+        //beggining = 1488527251245L;
         CodeSource codeSource = JsonReader.class.getProtectionDomain().getCodeSource();
         File jarFile = new File(codeSource.getLocation().toURI().getPath());
         String jarDir = jarFile.getParentFile().getPath();
-        String file = jarDir + "/" + currentDateTime + ".csv";
-        //FileWriter writer = new FileWriter(file);
-       // writer.write(" ");
-      //  writer.close();
+        String file = jarDir + "\\" + currentDateTime + ".csv";
+
         System.out.println(file);
         J.process(props.getProperty("TOKEN"), beggining,file, currentDateTime);
         SendEmail s = new SendEmail();
@@ -48,6 +46,12 @@ public class JsonReader {
         CrumziApi api = new CrumziApiImpl();
         List<com.clients.List> cards = api.getBuyerCards(TOKEN,date_from);
         //while (!cards.isEmpty()) {
+        if (cards.isEmpty()) {
+            File csvFile = new File(file);
+            FileWriter writer = new FileWriter(csvFile);
+            writer.write("Cards not found");
+            writer.close();
+        }
             for (com.clients.List card : cards) {
                 Payload payload = api.getInfoBuyCard(card.getId(), TOKEN);
 
@@ -61,7 +65,7 @@ public class JsonReader {
 
                 System.out.println(sb.toString());
 
-               // String outputFile ="D:\\\\"+filename+".csv";
+
 
 
                 boolean alreadyExists = new File(file).exists();
