@@ -12,11 +12,8 @@ import java.util.Properties;
 
 public class SendEmail {
 
-    //final String username = "testsss1234aa@gmail.com";
-  //  final String password = "q3eqw22wer23";
-
-
-    public void send(final String smtp_user, final String smtp_password,String smtp_host, String smtp_port,  String emailto, String file, String filename  ){
+    public void send(final String smtp_user, final String smtp_password,String smtp_host,
+                     String smtp_port,  String emailto, String file, String filename  ){
         Properties props = new Properties();
         props.put("mail.smtp.auth", true);
         props.put("mail.smtp.starttls.enable", true);

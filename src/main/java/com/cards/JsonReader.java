@@ -1,10 +1,13 @@
 package com.cards;
 
+//import com.api.CSVCreater;
 import com.api.CrumziApi;
 import com.api.CrumziApiImpl;
 import com.api.SendEmail;
 import com.csvreader.CsvWriter;
 import java.io.*;
+import java.net.URISyntaxException;
+import java.security.CodeSource;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 import java.util.List;
@@ -14,19 +17,24 @@ public class JsonReader {
 
     private static Properties props;
 
-  //  private static String TOKEN = "eyJhbGciOiJIUzUxMiJ9.eyJUT0tFTl9UWVBFIjoiU0VTU0lPTiIsIkFQUExJQ0FUSU9OX1RZUEUiOiJTRUxMRVIiLCJVU0VSX0lEIjoiMmM5ZjkxZjQ1OWFjZWYwZjAxNTliMTQzNmIzYjAwMDQiLCJpc3MiOiJDUlVNWkkiLCJpYXQiOjE0ODQ3Mzk0NTF9.sbYrTc2k54zCWhepAlNxeEgyIYYN3ko4Zg23RTdNhrART4fL_bgVCdN6rmR7tzsJILrjIyJZcJ3k5_RlnG7DvQ";
-  //  private static long date_from =1485935234027L;
-   // private static long date_to  =1485935607127L;
+    public static void main(String[] args) throws IOException, URISyntaxException {
 
-    public static void main(String[] args) throws IOException {
         props = loadProperties();
         JsonReader J = new JsonReader();
 
         LocalDateTime dateTime = LocalDateTime.now();
         Long beggining = dateTime.toLocalDate().atStartOfDay().toEpochSecond(ZoneOffset.UTC) * 1000;
         final String currentDateTime = Long.toString(System.currentTimeMillis());
-        String file = "D:\\\\" + currentDateTime + ".csv";
-        J.process(props.getProperty("TOKEN"), beggining, currentDateTime);
+
+        CodeSource codeSource = JsonReader.class.getProtectionDomain().getCodeSource();
+        File jarFile = new File(codeSource.getLocation().toURI().getPath());
+        String jarDir = jarFile.getParentFile().getPath();
+        String file = jarDir + "/" + currentDateTime + ".csv";
+        //FileWriter writer = new FileWriter(file);
+       // writer.write(" ");
+      //  writer.close();
+        System.out.println(file);
+        J.process(props.getProperty("TOKEN"), beggining,file, currentDateTime);
         SendEmail s = new SendEmail();
         s.send(props.getProperty("smtp_user"), props.getProperty("smtp_password"),
                 props.getProperty("smtp_host"), props.getProperty("smtp_port"),
@@ -36,7 +44,7 @@ public class JsonReader {
     }
 
 
-    private void process(String TOKEN, long date_from, String filename) throws IOException {
+    private void process(String TOKEN, long date_from,String file, String filename) throws IOException {
         CrumziApi api = new CrumziApiImpl();
         List<com.clients.List> cards = api.getBuyerCards(TOKEN,date_from);
         //while (!cards.isEmpty()) {
@@ -53,14 +61,15 @@ public class JsonReader {
 
                 System.out.println(sb.toString());
 
-                String outputFile ="D:\\\\"+filename+".csv";
+               // String outputFile ="D:\\\\"+filename+".csv";
 
 
-                boolean alreadyExists = new File(outputFile).exists();
+                boolean alreadyExists = new File(file).exists();
 
                 try {
+
                     // use FileWriter constructor that specifies open for appending
-                    CsvWriter csvOutput = new CsvWriter(new FileWriter(outputFile, true), ',');
+                    CsvWriter csvOutput = new CsvWriter(new FileWriter(file, true), ',');
 
                     // if the file didn't already exist then we need to write out the header line
                     if (!alreadyExists)

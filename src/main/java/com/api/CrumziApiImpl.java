@@ -48,7 +48,7 @@ public class CrumziApiImpl implements CrumziApi {
                 "  \"cursor\": \n" +
                 "  {\n" +
                 "    \"page_no\": \"0\",      \n" +
-                "    \"page_size\" : \"20\"    \n" +
+                "    \"page_size\" : \"500\"    \n" +
                 "  }\n" +
                 "}", date_from );
         entity = new StringEntity(body);
