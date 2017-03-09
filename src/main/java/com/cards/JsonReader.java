@@ -17,9 +17,10 @@ public class JsonReader {
 
     private static Properties props;
 
-    public static void main(String[] args) throws IOException, URISyntaxException {
+    public static void main(String[] args) throws URISyntaxException {
+      //  System.out.println(args[0]);
 
-        props = loadProperties();
+        props = loadProperties(args[0]);
         JsonReader J = new JsonReader();
 
         LocalDateTime dateTime = LocalDateTime.now();
@@ -32,7 +33,12 @@ public class JsonReader {
         String file = jarDir + "\\" + currentDateTime + ".csv";
 
         System.out.println(file);
-        J.process(props.getProperty("TOKEN"), beggining,file, currentDateTime);
+
+        try {
+            J.process(props.getProperty("TOKEN"), beggining,file, currentDateTime);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
         SendEmail s = new SendEmail();
         s.send(props.getProperty("smtp_user"), props.getProperty("smtp_password"),
                 props.getProperty("smtp_host"), props.getProperty("smtp_port"),
@@ -44,6 +50,7 @@ public class JsonReader {
 
     private void process(String TOKEN, long date_from,String file, String filename) throws IOException {
         CrumziApi api = new CrumziApiImpl();
+
         List<com.clients.List> cards = api.getBuyerCards(TOKEN,date_from);
         //while (!cards.isEmpty()) {
         if (cards.isEmpty()) {
@@ -94,12 +101,12 @@ public class JsonReader {
 
     }
 
-    private static Properties loadProperties(){
+    private static Properties loadProperties(String orgName){
         Properties prop = new Properties();
         InputStream input = null;
 
         try {
-            input = new FileInputStream("config.properties");
+            input = new FileInputStream(orgName + ".properties");
 
             // load a properties file
             prop.load(input);
