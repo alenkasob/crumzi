@@ -20,17 +20,19 @@ public class JsonReader {
     public static void main(String[] args) throws URISyntaxException {
       //  System.out.println(args[0]);
 
-        props = loadProperties(args[0]);
-        JsonReader J = new JsonReader();
-
         LocalDateTime dateTime = LocalDateTime.now();
         Long beggining = dateTime.toLocalDate().atStartOfDay().toEpochSecond(ZoneOffset.UTC) * 1000;
         final String currentDateTime = Long.toString(System.currentTimeMillis());
-        //beggining = 1488527251245L;
+        // beggining = 1488527251245L;
         CodeSource codeSource = JsonReader.class.getProtectionDomain().getCodeSource();
         File jarFile = new File(codeSource.getLocation().toURI().getPath());
         String jarDir = jarFile.getParentFile().getPath();
-        String file = jarDir + "\\" + currentDateTime + ".csv";
+        String file = jarDir + "/" + currentDateTime + ".csv";
+
+        props = loadProperties(args[0], jarDir);
+        JsonReader J = new JsonReader();
+
+
 
         System.out.println(file);
 
@@ -101,12 +103,12 @@ public class JsonReader {
 
     }
 
-    private static Properties loadProperties(String orgName){
+    private static Properties loadProperties(String orgName, String jarDir){
         Properties prop = new Properties();
         InputStream input = null;
 
         try {
-            input = new FileInputStream(orgName + ".properties");
+            input = new FileInputStream(jarDir + "/" + orgName + ".properties");
 
             // load a properties file
             prop.load(input);
