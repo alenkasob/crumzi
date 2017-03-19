@@ -35,7 +35,7 @@ public class JsonReader {
         try {
             jarFile = new File(codeSource.getLocation().toURI().getPath());
         } catch (URISyntaxException e) {
-                logger.error("!!!"+e.toString());
+                logger.error("!!!"+e);
             e.printStackTrace();
         }
         String jarDir = jarFile.getParentFile().getPath();
@@ -50,8 +50,8 @@ public class JsonReader {
         try {
             J.process(props.getProperty("TOKEN"), beggining,file, currentDateTime);
         } catch (IOException e) {
-            logger.error("!!!"+e.toString());
-            e.printStackTrace();
+            logger.error("!!!"+e);
+           // e.printStackTrace();
         }
         SendEmail s = new SendEmail();
         s.send(props.getProperty("smtp_user"), props.getProperty("smtp_password"),
@@ -108,7 +108,7 @@ public class JsonReader {
                     csvOutput.close();
                 } catch (IOException e) {
                     logger.error("!!!"+e);
-                   //e.printStackTrace();
+                    //e.printStackTrace();
                 }
 
             }
@@ -128,15 +128,15 @@ public class JsonReader {
             prop.load(input);
 
         } catch (IOException ex) {
-                logger.error("!!!"+ex.toString());
-            ex.printStackTrace();
+                logger.error("!!!"+ex);
+         //   ex.printStackTrace();
         } finally {
             if (input != null) {
                 try {
                     input.close();
                 } catch (IOException e) {
-                    logger.error("!!!"+e.toString());
-                    e.printStackTrace();
+                    logger.error("!!!"+e);
+                  //  e.printStackTrace();
                 }
             }
         }

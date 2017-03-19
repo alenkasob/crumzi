@@ -59,7 +59,7 @@ public class SendEmail {
 
         } catch (MessagingException e) {
             logger.error("!!!",e);
-            e.printStackTrace();
+         //   e.printStackTrace();
         }
 
 
