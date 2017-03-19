@@ -1,5 +1,8 @@
 package com.api;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import javax.activation.DataHandler;
 import javax.activation.DataSource;
 import javax.activation.FileDataSource;
@@ -11,7 +14,7 @@ import javax.mail.internet.MimeMultipart;
 import java.util.Properties;
 
 public class SendEmail {
-
+    Logger logger = LoggerFactory.getLogger(SendEmail.class);
     public void send(final String smtp_user, final String smtp_password,String smtp_host,
                      String smtp_port,  String emailto, String file, String filename  ){
         Properties props = new Properties();
@@ -47,14 +50,15 @@ public class SendEmail {
             multipart.addBodyPart(messageBodyPart);
 
             message.setContent(multipart);
-
-            System.out.println("Sending");
+            logger.info("Sending");
+           // System.out.println("Sending");
 
             Transport.send(message);
-
-            System.out.println("Done");
+            logger.info("Done");
+            //System.out.println("Done");
 
         } catch (MessagingException e) {
+            logger.error("!!!",e);
             e.printStackTrace();
         }
 

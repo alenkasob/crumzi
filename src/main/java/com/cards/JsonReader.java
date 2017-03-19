@@ -5,6 +5,9 @@ import com.api.CrumziApi;
 import com.api.CrumziApiImpl;
 import com.api.SendEmail;
 import com.csvreader.CsvWriter;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.io.*;
 import java.net.URISyntaxException;
 import java.security.CodeSource;
@@ -14,31 +17,40 @@ import java.util.List;
 import java.util.Properties;
 
 public class JsonReader {
+   private static Logger logger = LoggerFactory.getLogger(JsonReader.class);
 
     private static Properties props;
 
-    public static void main(String[] args) throws URISyntaxException {
-      //  System.out.println(args[0]);
+    public static void main(String[] args)// throws URISyntaxException
+    {
+
+
 
         LocalDateTime dateTime = LocalDateTime.now();
         Long beggining = dateTime.toLocalDate().atStartOfDay().toEpochSecond(ZoneOffset.UTC) * 1000;
         final String currentDateTime = Long.toString(System.currentTimeMillis());
         // beggining = 1488527251245L;
         CodeSource codeSource = JsonReader.class.getProtectionDomain().getCodeSource();
-        File jarFile = new File(codeSource.getLocation().toURI().getPath());
+        File jarFile = null;
+        try {
+            jarFile = new File(codeSource.getLocation().toURI().getPath());
+        } catch (URISyntaxException e) {
+                logger.error("!!!"+e.toString());
+            e.printStackTrace();
+        }
         String jarDir = jarFile.getParentFile().getPath();
         String file = jarDir + "/" + currentDateTime + ".csv";
 
         props = loadProperties(args[0], jarDir);
         JsonReader J = new JsonReader();
 
-
-
-        System.out.println(file);
+        logger.info(file);
+       // System.out.println(file);
 
         try {
             J.process(props.getProperty("TOKEN"), beggining,file, currentDateTime);
         } catch (IOException e) {
+            logger.error("!!!"+e.toString());
             e.printStackTrace();
         }
         SendEmail s = new SendEmail();
@@ -51,10 +63,11 @@ public class JsonReader {
 
 
     private void process(String TOKEN, long date_from,String file, String filename) throws IOException {
-        CrumziApi api = new CrumziApiImpl();
 
+
+        CrumziApi api = new CrumziApiImpl();
         List<com.clients.List> cards = api.getBuyerCards(TOKEN,date_from);
-        //while (!cards.isEmpty()) {
+
         if (cards.isEmpty()) {
             File csvFile = new File(file);
             FileWriter writer = new FileWriter(csvFile);
@@ -72,9 +85,7 @@ public class JsonReader {
                 sb.append(payload.getDate_created()+ ";");
                 sb.append((payload.getBuyer_profile()) ==null ? ";" : (payload.getBuyer_profile().getName()+ ";"));
 
-                System.out.println(sb.toString());
-
-
+  //              System.out.println(sb.toString());
 
 
                 boolean alreadyExists = new File(file).exists();
@@ -96,7 +107,8 @@ public class JsonReader {
 
                     csvOutput.close();
                 } catch (IOException e) {
-                    e.printStackTrace();
+                    logger.error("!!!"+e);
+                   //e.printStackTrace();
                 }
 
             }
@@ -104,9 +116,11 @@ public class JsonReader {
     }
 
     private static Properties loadProperties(String orgName, String jarDir){
+       // Logger logger = LoggerFactory.getLogger(Properties.class);
+
         Properties prop = new Properties();
         InputStream input = null;
-
+       // logger.info("load a properties file");
         try {
             input = new FileInputStream(jarDir + "/" + orgName + ".properties");
 
@@ -114,12 +128,14 @@ public class JsonReader {
             prop.load(input);
 
         } catch (IOException ex) {
+                logger.error("!!!"+ex.toString());
             ex.printStackTrace();
         } finally {
             if (input != null) {
                 try {
                     input.close();
                 } catch (IOException e) {
+                    logger.error("!!!"+e.toString());
                     e.printStackTrace();
                 }
             }
