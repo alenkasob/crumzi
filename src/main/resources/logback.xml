@@ -4,7 +4,7 @@
         <file>logfile.log</file>
         <append>true</append>
         <encoder>
-            <pattern>%-4relative [%thread] %-5level %logger{35} - %msg %n</pattern>
+            <pattern>%d{HH:mm:ss.SSS} [%thread] %-4relative  %-5level %logger{35} - %msg %n</pattern>
         </encoder>
     </appender>
     <appender name="ANALYTICS-FILE" class="ch.qos.logback.core.FileAppender">
@@ -22,3 +22,7 @@
         <appender-ref ref="FILE"/>
     </root>
 </configuration>
+
+
+
+
