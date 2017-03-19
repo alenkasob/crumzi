@@ -23,7 +23,7 @@ public class JsonReader {
 
     public static void main(String[] args)// throws URISyntaxException
     {
-
+        logger.info("<START>");
 
 
         LocalDateTime dateTime = LocalDateTime.now();
@@ -58,7 +58,7 @@ public class JsonReader {
                 props.getProperty("smtp_host"), props.getProperty("smtp_port"),
                 props.getProperty("emailto"),file , currentDateTime + ".csv");
 
-
+        logger.info("<FINISH>");
     }
 
 
