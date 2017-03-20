@@ -33,7 +33,7 @@ public class CrumziApiImpl implements CrumziApi {
 
         webshopPost.setHeader("Content-type", "application/json");
         webshopPost.setHeader("Session-Token", sessionToken);
-        // "{\"id\":\"" + cartId + "\"}"
+
         String body = String.format("{\n" +
                 "  \"card_type_id\" : null,    \n" +
                 "  \"search_string\" : null,    \n" +
@@ -54,7 +54,7 @@ public class CrumziApiImpl implements CrumziApi {
         MyClients Cl = mapper.readValue(webshopBody, MyClients.class);
         if (Integer.parseInt(Cl.getResponseStatus().split("\\.")[1]) == 200) {
             return Cl.getPayload().getList();
-        } else throw new IllegalStateException("resp1 error ");
+        } else throw new IllegalStateException("api/private/cards/seller/getlist (resp1) error ");
     }
 
     public Payload getInfoBuyCard(String cartId, String sessionToken) throws IOException {
@@ -65,11 +65,10 @@ public class CrumziApiImpl implements CrumziApi {
 
         HttpPost webshopPost = new HttpPost("http://rest-seller-api.crumzi.com/api/private/cards/seller/get");
         StringEntity entity = new StringEntity(request.toString());
-        webshopPost.setEntity(entity);
 
+        webshopPost.setEntity(entity);
         webshopPost.setHeader("Content-type", "application/json");
         webshopPost.setHeader("Session-Token", sessionToken);
-
         entity = new StringEntity("{\"id\":\"" + cartId + "\"}");
         webshopPost.setEntity(entity);
 
@@ -80,7 +79,7 @@ public class CrumziApiImpl implements CrumziApi {
 
         if (Integer.parseInt(myresp.getResponse_status().split("\\.")[1]) == 200) {
             return myresp.getPayload();
-        } else throw new IllegalStateException("resp2 error ");
+        } else throw new IllegalStateException("api/private/cards/seller/get (resp2) error ");
 
 
     }

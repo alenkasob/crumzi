@@ -59,7 +59,6 @@ public class JsonReader {
 
     private void process(String TOKEN, long date_from, String file, String filename){
 
-
         CrumziApi api = new CrumziApiImpl();
         List<com.clients.List> cards = null;
         try {
@@ -122,7 +121,7 @@ public class JsonReader {
     }
 
     private static Properties loadProperties(String orgName, String jarDir) {
-        // Logger logger = LoggerFactory.getLogger(Properties.class);
+
 
         Properties prop = new Properties();
         InputStream input = null;
