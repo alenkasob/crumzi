@@ -14,10 +14,10 @@ import javax.mail.internet.MimeMultipart;
 import java.util.Properties;
 
 public class SendEmail {
-    Logger logger = LoggerFactory.getLogger(SendEmail.class);
+    private Logger logger = LoggerFactory.getLogger(SendEmail.class);
 
     public void send(final String smtp_user, final String smtp_password, String smtp_host,
-                     String smtp_port, String emailto, String file, String filename) {
+                     String smtp_port, String emailto, String file) {
         Properties props = new Properties();
         props.put("mail.smtp.auth", true);
         props.put("mail.smtp.starttls.enable", true);
@@ -26,6 +26,7 @@ public class SendEmail {
 
         Session session = Session.getInstance(props,
                 new javax.mail.Authenticator() {
+                    @Override
                     protected PasswordAuthentication getPasswordAuthentication() {
                         return new PasswordAuthentication(smtp_user, smtp_password);
                     }
@@ -40,31 +41,26 @@ public class SendEmail {
             message.setSubject("Crumzi report");
             message.setText("");
 
-            MimeBodyPart messageBodyPart = new MimeBodyPart();
+            MimeBodyPart messageBodyPart;
             Multipart multipart = new MimeMultipart();
-
             messageBodyPart = new MimeBodyPart();
-            String fileName = filename;
+
             DataSource source = new FileDataSource(file);
             messageBodyPart.setDataHandler(new DataHandler(source));
-            messageBodyPart.setFileName(fileName);
+            messageBodyPart.setFileName(file);
             multipart.addBodyPart(messageBodyPart);
 
             message.setContent(multipart);
             logger.info("Sending");
-            // System.out.println("Sending");
 
             Transport.send(message);
             logger.info("Done");
-            //System.out.println("Done");
+
 
         } catch (MessagingException e) {
             logger.error("!!!", e);
-            //   e.printStackTrace();
         }
 
-
     }
-
 
 }

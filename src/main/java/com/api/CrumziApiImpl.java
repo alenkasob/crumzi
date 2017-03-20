@@ -19,7 +19,7 @@ import java.io.IOException;
 
 
 public class CrumziApiImpl implements CrumziApi {
-
+    @Override
     public java.util.List<List> getBuyerCards(String sessionToken, long date_from) throws IOException {
 
         ObjectMapper mapper = new ObjectMapper();
@@ -51,12 +51,14 @@ public class CrumziApiImpl implements CrumziApi {
 
         CloseableHttpResponse webshopResponce = httpclient.execute(webshopPost);
         String webshopBody = handler.handleResponse(webshopResponce);
-        MyClients Cl = mapper.readValue(webshopBody, MyClients.class);
-        if (Integer.parseInt(Cl.getResponseStatus().split("\\.")[1]) == 200) {
-            return Cl.getPayload().getList();
+        MyClients myClients = mapper.readValue(webshopBody, MyClients.class);
+        httpclient.close();
+        if (Integer.parseInt(myClients.getResponseStatus().split("\\.")[1]) == 200) {
+            return myClients.getPayload().getList();
         } else throw new IllegalStateException("api/private/cards/seller/getlist (resp1) error ");
-    }
 
+    }
+    @Override
     public Payload getInfoBuyCard(String cartId, String sessionToken) throws IOException {
         ObjectMapper mapper = new ObjectMapper();
         CloseableHttpClient httpclient = HttpClients.createDefault();
@@ -74,11 +76,10 @@ public class CrumziApiImpl implements CrumziApi {
 
         CloseableHttpResponse webshopResponce = httpclient.execute(webshopPost);
         String webshopBody = handler.handleResponse(webshopResponce);
-        MyResponse myresp = mapper.readValue(webshopBody, MyResponse.class);
-
-
-        if (Integer.parseInt(myresp.getResponse_status().split("\\.")[1]) == 200) {
-            return myresp.getPayload();
+        MyResponse myResponse = mapper.readValue(webshopBody, MyResponse.class);
+        httpclient.close();
+        if (Integer.parseInt(myResponse.getResponse_status().split("\\.")[1]) == 200) {
+            return myResponse.getPayload();
         } else throw new IllegalStateException("api/private/cards/seller/get (resp2) error ");
 
 

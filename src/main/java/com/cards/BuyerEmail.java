@@ -16,16 +16,9 @@ public class BuyerEmail {
         private String email;
 
         @JsonIgnore
-        private Map<String, Object> additionalProperties = new HashMap<String, Object>();
+        private Map<String, Object> additionalProperties = new HashMap<>();
 
-        /**
-         * No args constructor for use in serialization
-         *
-         */
-        public BuyerEmail() {
-        }
-
-        /**
+    /**
          *
 
          * @param email

@@ -26,38 +26,44 @@ public class JsonReader {
         LocalDateTime dateTime = LocalDateTime.now();
         Long beggining = dateTime.toLocalDate().atStartOfDay().toEpochSecond(ZoneOffset.UTC) * 1000;
         final String currentDateTime = Long.toString(System.currentTimeMillis());
-        // beggining = 1488527251245L;
+
         CodeSource codeSource = JsonReader.class.getProtectionDomain().getCodeSource();
         File jarFile = null;
         try {
             jarFile = new File(codeSource.getLocation().toURI().getPath());
         } catch (URISyntaxException e) {
-            logger.error("!!!" + e);
-            e.printStackTrace();
+            logger.error("!!!", e);
         }
-        String jarDir = jarFile.getParentFile().getPath();
+        String jarDir;
+
+        if (jarFile != null) {
+            jarDir = jarFile.getParentFile().getPath();
+        }
+       else{
+            logger.error("!!!"+"null jarDir");
+            return;
+        }
         String file = jarDir + "/" + currentDateTime + ".csv";
 
         props = loadProperties(args[0], jarDir);
-        JsonReader J = new JsonReader();
+        JsonReader jsonReader = new JsonReader();
 
         logger.info(file);
-        // System.out.println(file);
 
-
-            J.process(props.getProperty("TOKEN"), beggining, file, currentDateTime);
+        jsonReader.process(props.getProperty("TOKEN"), beggining, file//,filename
+               );
 
 
         SendEmail s = new SendEmail();
         s.send(props.getProperty("smtp_user"), props.getProperty("smtp_password"),
                 props.getProperty("smtp_host"), props.getProperty("smtp_port"),
-                props.getProperty("emailto"), file, currentDateTime + ".csv");
+                props.getProperty("emailto"), file);
 
         logger.info("<FINISH>");
     }
 
 
-    private void process(String TOKEN, long date_from, String file, String filename){
+    private void process(String TOKEN, long date_from, String file){
 
         CrumziApi api = new CrumziApiImpl();
         List<com.clients.List> cards = null;
@@ -70,7 +76,7 @@ public class JsonReader {
                 writer.close();
             }
         } catch (IOException e) {
-            e.printStackTrace();
+            logger.error("!!!", e);
         }
 
 
@@ -80,7 +86,8 @@ public class JsonReader {
                 payload = api.getInfoBuyCard(card.getId(), TOKEN);
 
             } catch (IOException e) {
-                e.printStackTrace();
+                logger.error("!!!", e);
+
             }
 
             StringBuilder sb = new StringBuilder();
@@ -90,9 +97,6 @@ public class JsonReader {
             sb.append(payload.isIsActivated() + ";");
             sb.append(payload.getDate_created() + ";");
             sb.append((payload.getBuyer_profile()) == null ? ";" : (payload.getBuyer_profile().getName() + ";"));
-
-            // System.out.println(sb.toString());
-
 
             boolean alreadyExists = new File(file).exists();
 
@@ -112,8 +116,7 @@ public class JsonReader {
 
                 csvOutput.close();
             } catch (IOException e) {
-                logger.error("!!!" + e);
-                //e.printStackTrace();
+                logger.error("!!!" , e);
             }
 
         }
@@ -122,27 +125,21 @@ public class JsonReader {
 
     private static Properties loadProperties(String orgName, String jarDir) {
 
-
         Properties prop = new Properties();
         InputStream input = null;
-        // logger.info("load a properties file");
         try {
             input = new FileInputStream(jarDir + "/" + orgName + ".properties");
-
             // load a properties file
-
             prop.load(input);
 
         } catch (IOException ex) {
-            logger.error("!!!" + ex);
-            //   ex.printStackTrace();
+            logger.error("!!!", ex);
         } finally {
             if (input != null) {
                 try {
                     input.close();
                 } catch (IOException e) {
-                    logger.error("!!!" + e);
-                    //  e.printStackTrace();
+                    logger.error("!!!", e);
                 }
             }
         }
