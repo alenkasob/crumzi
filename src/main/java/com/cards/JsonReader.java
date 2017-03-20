@@ -89,6 +89,10 @@ public class JsonReader {
                 logger.error("!!!", e);
 
             }
+            if (payload ==null){
+                logger.error("!!! Payload is null");
+                return;
+            }
 
             StringBuilder sb = new StringBuilder();
             sb.append((payload.getPhone_number()) == null ? ";" : (payload.getPhone_number() + ";"));
